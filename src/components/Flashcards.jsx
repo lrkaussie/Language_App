@@ -60,7 +60,7 @@ function Flashcards() {
       </div>
 
       {/* Category Filter - Responsive with horizontal scroll on mobile */}
-      <div className="flex justify-start sm:justify-center gap-2 overflow-x-auto pb-2 mb-4 sm:mb-6 scrollbar-hide">
+      <div className="flex justify-start sm:justify-center gap-2 overflow-x-auto pb-2 mb-4 sm:mb-6 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
         {categories.map(cat => (
           <button
             key={cat}
@@ -68,7 +68,7 @@ function Flashcards() {
               setCategory(cat)
               setCurrentIndex(0)
             }}
-            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
               category === cat
                 ? 'bg-blue-600 text-white shadow-sm'
                 : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
