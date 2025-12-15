@@ -1,0 +1,147 @@
+import { useState, useEffect } from 'react'
+import { vocabulary } from '../data/kannadaData'
+
+function Quiz() {
+  const [currentQuestion, setCurrentQuestion] = useState(null)
+  const [score, setScore] = useState(0)
+  const [totalQuestions, setTotalQuestions] = useState(0)
+  const [selectedAnswer, setSelectedAnswer] = useState(null)
+  const [showResult, setShowResult] = useState(false)
+  const [isCorrect, setIsCorrect] = useState(null)
+
+  useEffect(() => {
+    generateQuestion()
+  }, [])
+
+  const generateQuestion = () => {
+    const randomWord = vocabulary[Math.floor(Math.random() * vocabulary.length)]
+    const wrongAnswers = vocabulary
+      .filter(w => w.kannada !== randomWord.kannada)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+      .map(w => w.english)
+    
+    const answers = [randomWord.english, ...wrongAnswers]
+      .sort(() => Math.random() - 0.5)
+
+    setCurrentQuestion({
+      kannada: randomWord.kannada,
+      transliteration: randomWord.transliteration,
+      pronunciation: randomWord.pronunciation,
+      correctAnswer: randomWord.english,
+      answers
+    })
+    setSelectedAnswer(null)
+    setShowResult(false)
+    setIsCorrect(null)
+  }
+
+  const handleAnswer = (answer) => {
+    if (showResult) return
+    
+    setSelectedAnswer(answer)
+    setShowResult(true)
+    setTotalQuestions(prev => prev + 1)
+    
+    if (answer === currentQuestion.correctAnswer) {
+      setIsCorrect(true)
+      setScore(prev => prev + 1)
+    } else {
+      setIsCorrect(false)
+    }
+  }
+
+  const handleNext = () => {
+    generateQuestion()
+  }
+
+  if (!currentQuestion) {
+    return <div className="text-center text-gray-600">Loading question...</div>
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Listening: Introduction</h2>
+        <p className="text-gray-600">Test your knowledge with interactive quizzes</p>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
+        <div className="text-center mb-6">
+          <div className="text-5xl font-bold text-blue-600 mb-4">
+            {currentQuestion.kannada}
+          </div>
+          <div className="text-xl text-gray-600 italic mb-2">
+            {currentQuestion.transliteration}
+          </div>
+          {currentQuestion.pronunciation && (
+            <div className="text-base text-green-600 font-mono">
+              🔊 {currentQuestion.pronunciation}
+            </div>
+          )}
+        </div>
+
+        <div className="text-center mb-6">
+          <p className="text-lg text-gray-700 mb-4">
+            What does this word mean?
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          {currentQuestion.answers.map((answer, index) => (
+            <button
+              key={index}
+              onClick={() => handleAnswer(answer)}
+              disabled={showResult}
+              className={`p-4 rounded-lg font-semibold text-left transition-all ${
+                showResult && answer === currentQuestion.correctAnswer
+                  ? 'bg-green-500 text-white'
+                  : showResult && answer === selectedAnswer && !isCorrect
+                  ? 'bg-red-500 text-white'
+                  : showResult
+                  ? 'bg-gray-200 text-gray-600'
+                  : 'bg-blue-50 text-blue-800 hover:bg-blue-100 border border-blue-200'
+              }`}
+            >
+              {answer}
+            </button>
+          ))}
+        </div>
+
+        {showResult && (
+          <div className="text-center">
+            {isCorrect ? (
+              <div className="text-2xl font-bold text-green-600 mb-4">
+                ✓ Correct!
+              </div>
+            ) : (
+              <div className="text-2xl font-bold text-red-600 mb-4">
+                ✗ Incorrect. The answer is: {currentQuestion.correctAnswer}
+              </div>
+            )}
+            <button
+              onClick={handleNext}
+              className="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all"
+            >
+              Next Question →
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm p-6 text-center border border-gray-200">
+        <div className="text-2xl font-bold text-gray-900 mb-2">
+          Score: {score} / {totalQuestions}
+        </div>
+        {totalQuestions > 0 && (
+          <div className="text-lg text-gray-600">
+            {Math.round((score / totalQuestions) * 100)}% correct
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default Quiz
+
