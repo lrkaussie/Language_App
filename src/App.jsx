@@ -4,19 +4,20 @@ import Progress from './components/Progress'
 import Flashcards from './components/Flashcards'
 import Phrases from './components/Phrases'
 import Quiz from './components/Quiz'
+import Footer from './components/Footer'
 
 function App() {
   const [currentView, setCurrentView] = useState('dashboard')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="flex flex-1">
         {/* Left Sidebar - Hidden on mobile */}
         <Sidebar className="hidden md:flex" />
 
         {/* Main Content */}
-        <div className="flex-1 w-full">
+        <div className="flex-1 w-full flex flex-col">
           {/* Top Navigation */}
           <TopNav 
             currentView={currentView} 
@@ -26,10 +27,13 @@ function App() {
           />
 
           {/* Main Content Area - Responsive padding */}
-          <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex-1 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
             {currentView === 'dashboard' && <Flashcards />}
             {currentView === 'progress' && <Progress />}
           </div>
+
+          {/* Footer */}
+          <Footer />
         </div>
       </div>
     </div>
