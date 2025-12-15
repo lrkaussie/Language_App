@@ -60,40 +60,40 @@ function Quiz() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Listening: Introduction</h2>
-        <p className="text-gray-600">Test your knowledge with interactive quizzes</p>
+    <div className="space-y-4 sm:space-y-6 max-w-4xl mx-auto">
+      <div className="mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Listening: Introduction</h2>
+        <p className="text-sm sm:text-base text-gray-600">Test your knowledge with interactive quizzes</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
-        <div className="text-center mb-6">
-          <div className="text-5xl font-bold text-blue-600 mb-4">
+      <div className="bg-white rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-200">
+        <div className="text-center mb-4 sm:mb-6">
+          <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-blue-600 mb-3 sm:mb-4">
             {currentQuestion.kannada}
           </div>
-          <div className="text-xl text-gray-600 italic mb-2">
+          <div className="text-base sm:text-lg lg:text-xl text-gray-600 italic mb-2">
             {currentQuestion.transliteration}
           </div>
           {currentQuestion.pronunciation && (
-            <div className="text-base text-green-600 font-mono">
+            <div className="text-sm sm:text-base text-green-600 font-mono">
               🔊 {currentQuestion.pronunciation}
             </div>
           )}
         </div>
 
-        <div className="text-center mb-6">
-          <p className="text-lg text-gray-700 mb-4">
+        <div className="text-center mb-4 sm:mb-6">
+          <p className="text-base sm:text-lg text-gray-700 mb-4">
             What does this word mean?
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
           {currentQuestion.answers.map((answer, index) => (
             <button
               key={index}
               onClick={() => handleAnswer(answer)}
               disabled={showResult}
-              className={`p-4 rounded-lg font-semibold text-left transition-all ${
+              className={`p-3 sm:p-4 rounded-lg font-semibold text-left text-sm sm:text-base transition-all active:scale-95 ${
                 showResult && answer === currentQuestion.correctAnswer
                   ? 'bg-green-500 text-white'
                   : showResult && answer === selectedAnswer && !isCorrect
@@ -111,17 +111,17 @@ function Quiz() {
         {showResult && (
           <div className="text-center">
             {isCorrect ? (
-              <div className="text-2xl font-bold text-green-600 mb-4">
+              <div className="text-xl sm:text-2xl font-bold text-green-600 mb-4">
                 ✓ Correct!
               </div>
             ) : (
-              <div className="text-2xl font-bold text-red-600 mb-4">
+              <div className="text-lg sm:text-xl lg:text-2xl font-bold text-red-600 mb-4">
                 ✗ Incorrect. The answer is: {currentQuestion.correctAnswer}
               </div>
             )}
             <button
               onClick={handleNext}
-              className="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all"
+              className="px-6 sm:px-8 py-2.5 sm:py-3 bg-blue-600 text-white rounded-lg font-semibold text-sm sm:text-base hover:bg-blue-700 transition-all active:scale-95"
             >
               Next Question →
             </button>
@@ -129,12 +129,12 @@ function Quiz() {
         )}
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6 text-center border border-gray-200">
-        <div className="text-2xl font-bold text-gray-900 mb-2">
+      <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-6 text-center border border-gray-200">
+        <div className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
           Score: {score} / {totalQuestions}
         </div>
         {totalQuestions > 0 && (
-          <div className="text-lg text-gray-600">
+          <div className="text-base sm:text-lg text-gray-600">
             {Math.round((score / totalQuestions) * 100)}% correct
           </div>
         )}
