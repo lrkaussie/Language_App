@@ -68,7 +68,7 @@ function TopNav({ currentView, setCurrentView, mobileMenuOpen, setMobileMenuOpen
         <div className="hidden sm:flex gap-1 bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => setCurrentView('dashboard')}
-            className={`px-3 sm:px-6 py-2 rounded-md font-medium transition-all text-sm sm:text-base ${
+            className={`px-3 sm:px-6 py-2 rounded-md font-medium transition-all text-sm sm:text-base whitespace-nowrap ${
               currentView === 'dashboard'
                 ? 'bg-blue-600 text-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
@@ -78,7 +78,7 @@ function TopNav({ currentView, setCurrentView, mobileMenuOpen, setMobileMenuOpen
           </button>
           <button
             onClick={() => setCurrentView('progress')}
-            className={`px-3 sm:px-6 py-2 rounded-md font-medium transition-all text-sm sm:text-base ${
+            className={`px-3 sm:px-6 py-2 rounded-md font-medium transition-all text-sm sm:text-base whitespace-nowrap ${
               currentView === 'progress'
                 ? 'bg-blue-600 text-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
@@ -101,7 +101,7 @@ function TopNav({ currentView, setCurrentView, mobileMenuOpen, setMobileMenuOpen
         {/* Right Side - Hidden on mobile */}
         <div className="hidden lg:flex items-center gap-4">
           <span className="text-gray-600 hover:text-gray-900 cursor-pointer">Profile</span>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors">
+          <button className="bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors whitespace-nowrap">
             Sign In
           </button>
         </div>
@@ -115,7 +115,7 @@ function TopNav({ currentView, setCurrentView, mobileMenuOpen, setMobileMenuOpen
               setCurrentView('dashboard')
               setMobileMenuOpen(false)
             }}
-            className={`w-full text-left px-4 py-2 rounded-md font-medium transition-all ${
+            className={`w-full text-left px-4 py-2 rounded-md font-medium transition-all whitespace-nowrap ${
               currentView === 'dashboard'
                 ? 'bg-blue-600 text-white'
                 : 'text-gray-600 hover:bg-gray-100'
@@ -128,7 +128,7 @@ function TopNav({ currentView, setCurrentView, mobileMenuOpen, setMobileMenuOpen
               setCurrentView('progress')
               setMobileMenuOpen(false)
             }}
-            className={`w-full text-left px-4 py-2 rounded-md font-medium transition-all ${
+            className={`w-full text-left px-4 py-2 rounded-md font-medium transition-all whitespace-nowrap ${
               currentView === 'progress'
                 ? 'bg-blue-600 text-white'
                 : 'text-gray-600 hover:bg-gray-100'
