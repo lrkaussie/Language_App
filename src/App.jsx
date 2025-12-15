@@ -7,20 +7,26 @@ import Quiz from './components/Quiz'
 
 function App() {
   const [currentView, setCurrentView] = useState('dashboard')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex">
-        {/* Left Sidebar */}
-        <Sidebar />
+        {/* Left Sidebar - Hidden on mobile */}
+        <Sidebar className="hidden md:flex" />
 
         {/* Main Content */}
-        <div className="flex-1">
+        <div className="flex-1 w-full">
           {/* Top Navigation */}
-          <TopNav currentView={currentView} setCurrentView={setCurrentView} />
+          <TopNav 
+            currentView={currentView} 
+            setCurrentView={setCurrentView}
+            mobileMenuOpen={mobileMenuOpen}
+            setMobileMenuOpen={setMobileMenuOpen}
+          />
 
-          {/* Main Content Area */}
-          <div className="px-8 py-6">
+          {/* Main Content Area - Responsive padding */}
+          <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
             {currentView === 'dashboard' && <Flashcards />}
             {currentView === 'progress' && <Progress />}
           </div>
@@ -30,9 +36,9 @@ function App() {
   )
 }
 
-function Sidebar() {
+function Sidebar({ className = '' }) {
   return (
-    <div className="w-16 bg-white border-r border-gray-200 flex flex-col items-center py-4 gap-4">
+    <div className={`w-16 bg-white border-r border-gray-200 flex-col items-center py-4 gap-4 ${className}`}>
       <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white text-lg cursor-pointer hover:bg-blue-600 transition-colors">
         🏠
       </div>
@@ -46,23 +52,23 @@ function Sidebar() {
   )
 }
 
-function TopNav({ currentView, setCurrentView }) {
+function TopNav({ currentView, setCurrentView, mobileMenuOpen, setMobileMenuOpen }) {
   return (
-    <div className="bg-white border-b border-gray-200 px-8 py-4">
+    <div className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
       <div className="flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-lg">
             🐢
           </div>
-          <span className="text-xl font-bold text-gray-900">TalkTurtle</span>
+          <span className="text-lg sm:text-xl font-bold text-gray-900">TalkTurtle</span>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+        {/* Navigation Tabs - Hidden on mobile, shown on tablet+ */}
+        <div className="hidden sm:flex gap-1 bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => setCurrentView('dashboard')}
-            className={`px-6 py-2 rounded-md font-medium transition-all ${
+            className={`px-3 sm:px-6 py-2 rounded-md font-medium transition-all text-sm sm:text-base ${
               currentView === 'dashboard'
                 ? 'bg-blue-600 text-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
@@ -72,7 +78,7 @@ function TopNav({ currentView, setCurrentView }) {
           </button>
           <button
             onClick={() => setCurrentView('progress')}
-            className={`px-6 py-2 rounded-md font-medium transition-all ${
+            className={`px-3 sm:px-6 py-2 rounded-md font-medium transition-all text-sm sm:text-base ${
               currentView === 'progress'
                 ? 'bg-blue-600 text-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
@@ -82,14 +88,56 @@ function TopNav({ currentView, setCurrentView }) {
           </button>
         </div>
 
-        {/* Right Side */}
-        <div className="flex items-center gap-4">
+        {/* Mobile Menu Button */}
+        <button 
+          className="sm:hidden p-2 text-gray-600 hover:text-gray-900"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+
+        {/* Right Side - Hidden on mobile */}
+        <div className="hidden lg:flex items-center gap-4">
           <span className="text-gray-600 hover:text-gray-900 cursor-pointer">Profile</span>
           <button className="bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors">
             Sign In
           </button>
         </div>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <div className="sm:hidden mt-4 pb-3 space-y-2">
+          <button
+            onClick={() => {
+              setCurrentView('dashboard')
+              setMobileMenuOpen(false)
+            }}
+            className={`w-full text-left px-4 py-2 rounded-md font-medium transition-all ${
+              currentView === 'dashboard'
+                ? 'bg-blue-600 text-white'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            Dashboard
+          </button>
+          <button
+            onClick={() => {
+              setCurrentView('progress')
+              setMobileMenuOpen(false)
+            }}
+            className={`w-full text-left px-4 py-2 rounded-md font-medium transition-all ${
+              currentView === 'progress'
+                ? 'bg-blue-600 text-white'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            Progress
+          </button>
+        </div>
+      )}
     </div>
   )
 }

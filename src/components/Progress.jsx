@@ -23,47 +23,47 @@ function Progress() {
   })
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 max-w-6xl mx-auto">
       <div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Your Progress</h2>
-        <p className="text-gray-600">Track your learning journey in Kannada</p>
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Your Progress</h2>
+        <p className="text-sm sm:text-base text-gray-600">Track your learning journey in Kannada</p>
       </div>
 
-      {/* Overall Progress */}
-      <div className="bg-white rounded-xl p-8 border border-gray-200">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">Overall Progress</h3>
+      {/* Overall Progress - Responsive padding */}
+      <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 lg:p-8 border border-gray-200">
+        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Overall Progress</h3>
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-gray-600">Words Learned</span>
-            <span className="text-2xl font-bold text-blue-600">
+            <span className="text-sm sm:text-base text-gray-600">Words Learned</span>
+            <span className="text-xl sm:text-2xl font-bold text-blue-600">
               {learnedCount} / {totalWords}
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-4">
+          <div className="w-full bg-gray-200 rounded-full h-3 sm:h-4">
             <div
-              className="bg-blue-600 h-4 rounded-full transition-all duration-300"
+              className="bg-blue-600 h-3 sm:h-4 rounded-full transition-all duration-300"
               style={{ width: `${progressPercentage}%` }}
             ></div>
           </div>
         </div>
-        <p className="text-gray-600">
+        <p className="text-sm sm:text-base text-gray-600">
           {progressPercentage.toFixed(1)}% Complete
         </p>
       </div>
 
-      {/* Category Progress */}
+      {/* Category Progress - Responsive grid */}
       <div>
-        <h3 className="text-xl font-bold text-gray-900 mb-4">Progress by Category</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Progress by Category</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {Object.entries(categoryProgress).map(([category, stats]) => {
             const categoryPercentage = (stats.learned / stats.total) * 100
             return (
-              <div key={category} className="bg-white rounded-xl p-6 border border-gray-200">
+              <div key={category} className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 border border-gray-200">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="font-semibold text-gray-900 capitalize">
+                  <span className="text-sm sm:text-base font-semibold text-gray-900 capitalize">
                     {category}
                   </span>
-                  <span className="text-blue-600 font-bold">
+                  <span className="text-sm sm:text-base text-blue-600 font-bold">
                     {stats.learned} / {stats.total}
                   </span>
                 </div>
@@ -73,7 +73,7 @@ function Progress() {
                     style={{ width: `${categoryPercentage}%` }}
                   ></div>
                 </div>
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-xs sm:text-sm text-gray-500 mt-2">
                   {categoryPercentage.toFixed(0)}% complete
                 </p>
               </div>
@@ -82,12 +82,12 @@ function Progress() {
         </div>
       </div>
 
-      {/* Recent Activity */}
-      <div className="bg-white rounded-xl p-8 border border-gray-200">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">Recent Activity</h3>
+      {/* Recent Activity - Responsive padding */}
+      <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 lg:p-8 border border-gray-200">
+        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Recent Activity</h3>
         {learnedWords.length > 0 ? (
           <div className="space-y-2">
-            <p className="text-gray-600">
+            <p className="text-sm sm:text-base text-gray-600">
               You've learned {learnedWords.length} word{learnedWords.length !== 1 ? 's' : ''} so far!
             </p>
             <div className="flex flex-wrap gap-2 mt-4">
@@ -96,7 +96,7 @@ function Progress() {
                 return (
                   <span
                     key={index}
-                    className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm font-medium"
+                    className="bg-green-50 text-green-700 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium"
                   >
                     {wordData?.english || word}
                   </span>
@@ -105,7 +105,7 @@ function Progress() {
             </div>
           </div>
         ) : (
-          <p className="text-gray-500">Start learning to see your progress here!</p>
+          <p className="text-sm sm:text-base text-gray-500">Start learning to see your progress here!</p>
         )}
       </div>
     </div>
