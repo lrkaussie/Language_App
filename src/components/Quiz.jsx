@@ -93,7 +93,7 @@ function Quiz() {
               key={index}
               onClick={() => handleAnswer(answer)}
               disabled={showResult}
-              className={`p-3 sm:p-4 rounded-lg font-semibold text-left text-sm sm:text-base transition-all active:scale-95 ${
+              className={`p-3 sm:p-4 rounded-lg font-semibold text-left text-sm sm:text-base transition-all active:scale-95 break-words ${
                 showResult && answer === currentQuestion.correctAnswer
                   ? 'bg-green-500 text-white'
                   : showResult && answer === selectedAnswer && !isCorrect
@@ -121,7 +121,7 @@ function Quiz() {
             )}
             <button
               onClick={handleNext}
-              className="px-6 sm:px-8 py-2.5 sm:py-3 bg-blue-600 text-white rounded-lg font-semibold text-sm sm:text-base hover:bg-blue-700 transition-all active:scale-95"
+              className="px-6 sm:px-8 py-2.5 sm:py-3 bg-blue-600 text-white rounded-lg font-semibold text-sm sm:text-base hover:bg-blue-700 transition-all active:scale-95 whitespace-nowrap"
             >
               Next Question →
             </button>

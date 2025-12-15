@@ -128,13 +128,13 @@ function Flashcards() {
       <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
         <button
           onClick={handlePrev}
-          className="px-4 sm:px-6 py-2.5 sm:py-3 bg-white rounded-lg font-semibold text-sm sm:text-base text-gray-700 hover:bg-gray-50 transition-all border border-gray-200 shadow-sm active:scale-95"
+          className="px-4 sm:px-6 py-2.5 sm:py-3 bg-white rounded-lg font-semibold text-sm sm:text-base text-gray-700 hover:bg-gray-50 transition-all border border-gray-200 shadow-sm active:scale-95 whitespace-nowrap"
         >
           ← Previous
         </button>
         <button
           onClick={markLearned}
-          className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all shadow-sm active:scale-95 ${
+          className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all shadow-sm active:scale-95 whitespace-nowrap ${
             learnedWords.includes(currentWord.kannada)
               ? 'bg-green-500 text-white hover:bg-green-600'
               : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -144,7 +144,7 @@ function Flashcards() {
         </button>
         <button
           onClick={handleNext}
-          className="px-4 sm:px-6 py-2.5 sm:py-3 bg-white rounded-lg font-semibold text-sm sm:text-base text-gray-700 hover:bg-gray-50 transition-all border border-gray-200 shadow-sm active:scale-95"
+          className="px-4 sm:px-6 py-2.5 sm:py-3 bg-white rounded-lg font-semibold text-sm sm:text-base text-gray-700 hover:bg-gray-50 transition-all border border-gray-200 shadow-sm active:scale-95 whitespace-nowrap"
         >
           Next →
         </button>

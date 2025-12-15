@@ -57,12 +57,12 @@ function Dashboard({ onLessonClick }) {
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <button
             onClick={() => onLessonClick('flashcards')}
-            className="bg-blue-600 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+            className="bg-blue-600 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base whitespace-nowrap"
           >
             Continue Lesson
             <span>→</span>
           </button>
-          <button className="bg-white text-blue-600 px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors border border-gray-200 text-sm sm:text-base">
+          <button className="bg-white text-blue-600 px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors border border-gray-200 text-sm sm:text-base whitespace-nowrap">
             View Curriculum
           </button>
         </div>
