@@ -62,65 +62,104 @@ function Flashcards() {
 
   const categories = ['all', ...new Set(vocabulary.map(w => w.category))]
 
-  // Web Speech API function with fallback
+  // Web Speech API function with fallback and retry logic
   const speakWord = (e) => {
     e.stopPropagation() // Prevent card flip when clicking audio button
     
     if ('speechSynthesis' in window) {
       // Cancel any ongoing speech
       window.speechSynthesis.cancel()
-      setIsSpeaking(false)
       
-      // Get available voices
+      // Set speaking state immediately for UI feedback
+      setIsSpeaking(true)
+      
+      // Helper function to attempt speech with proper error handling
+      const attemptSpeech = (retryWithFallback = false) => {
+        // Get available voices (might need a moment to load on Android)
+        const voices = window.speechSynthesis.getVoices()
+        console.log('📋 Available voices:', voices.map(v => `${v.name} (${v.lang})`))
+        
+        // Try to find a Kannada voice
+        const kannadaVoice = voices.find(voice => voice.lang.startsWith('kn'))
+        
+        let textToSpeak = currentWord.kannada
+        let language = 'kn-IN'
+        let usingFallback = false
+        
+        // Fallback: If no Kannada voice OR if retry was triggered, use transliteration
+        if (!kannadaVoice || retryWithFallback) {
+          console.log('⚠️ Using transliteration fallback')
+          textToSpeak = currentWord.transliteration
+          language = 'en-US'
+          usingFallback = true
+        } else {
+          console.log('✅ Using Kannada voice:', kannadaVoice.name)
+        }
+        
+        const utterance = new SpeechSynthesisUtterance(textToSpeak)
+        utterance.lang = language
+        utterance.rate = 0.6 // Slower for learning
+        utterance.pitch = 1.0
+        utterance.volume = 1.0
+        
+        // Set voice explicitly if available
+        if (kannadaVoice && !retryWithFallback) {
+          utterance.voice = kannadaVoice
+        }
+        
+        // Event listeners
+        utterance.onstart = () => {
+          console.log('🔊 Speech started:', textToSpeak)
+          setIsSpeaking(true)
+        }
+        
+        utterance.onend = () => {
+          console.log('✅ Speech completed')
+          setIsSpeaking(false)
+        }
+        
+        utterance.onerror = (event) => {
+          console.error('❌ Speech error:', event.error, event)
+          setIsSpeaking(false)
+          
+          // If Kannada failed and we haven't tried fallback yet
+          if (!usingFallback && !retryWithFallback) {
+            console.log('🔄 Retrying with transliteration fallback...')
+            setTimeout(() => attemptSpeech(true), 100)
+          } else {
+            // Show user-friendly error message
+            const errorMsg = event.error === 'network' 
+              ? 'Network error. Please check your internet connection.'
+              : event.error === 'synthesis-failed'
+              ? 'Speech synthesis failed. The Kannada voice may need to be downloaded in your device settings.'
+              : `Audio playback failed: ${event.error}`
+            
+            alert(`${errorMsg}\n\nTip: Use the pronunciation guide above to learn the correct pronunciation!`)
+          }
+        }
+        
+        // Speak with a small delay to ensure everything is ready (Android fix)
+        setTimeout(() => {
+          console.log('🎤 Initiating speech synthesis...')
+          window.speechSynthesis.speak(utterance)
+        }, 100)
+      }
+      
+      // For Android: Ensure voices are loaded before attempting
       const voices = window.speechSynthesis.getVoices()
-      console.log('Available voices:', voices.map(v => `${v.name} (${v.lang})`))
-      
-      // Try to find a Kannada voice
-      const kannadaVoice = voices.find(voice => voice.lang.startsWith('kn'))
-      
-      let textToSpeak = currentWord.kannada
-      let language = 'kn-IN'
-      
-      // Fallback: If no Kannada voice, use transliteration with English voice
-      if (!kannadaVoice) {
-        console.log('No Kannada voice found. Using transliteration as fallback.')
-        textToSpeak = currentWord.transliteration
-        language = 'en-US'
+      if (voices.length === 0) {
+        console.log('⏳ Waiting for voices to load...')
+        // Voices not loaded yet, wait for them
+        window.speechSynthesis.onvoiceschanged = () => {
+          console.log('✅ Voices loaded!')
+          attemptSpeech()
+        }
+        // Also try after a short delay as fallback
+        setTimeout(() => attemptSpeech(), 500)
       } else {
-        console.log('Using Kannada voice:', kannadaVoice.name)
+        attemptSpeech()
       }
       
-      const utterance = new SpeechSynthesisUtterance(textToSpeak)
-      utterance.lang = language
-      utterance.rate = 0.5 // Much slower - clearer for hearing
-      utterance.pitch = 1.0
-      utterance.volume = 1.0 // Maximum volume
-      
-      if (kannadaVoice) {
-        utterance.voice = kannadaVoice
-      }
-      
-      // Add event listeners with visual feedback
-      utterance.onstart = () => {
-        console.log('Speech started:', textToSpeak)
-        setIsSpeaking(true)
-      }
-      utterance.onend = () => {
-        console.log('Speech ended')
-        setIsSpeaking(false)
-      }
-      utterance.onerror = (e) => {
-        console.error('Speech error:', e)
-        setIsSpeaking(false)
-        alert(`Speech error: ${e.error}. Please check your system audio.`)
-      }
-      
-      window.speechSynthesis.speak(utterance)
-      
-      // Show what's being spoken
-      if (!kannadaVoice) {
-        console.log(`🔊 Playing in ENGLISH: "${textToSpeak}" (no Kannada voice available)`)
-      }
     } else {
       alert('Sorry, your browser does not support text-to-speech.')
     }
@@ -173,11 +212,29 @@ function Flashcards() {
         )}
         
         {hasKannadaVoice === true && (
-          <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2">
-            <span className="text-xl">✅</span>
-            <p className="text-sm text-green-800">
-              <strong>Native Kannada audio enabled!</strong> You'll hear authentic pronunciation.
-            </p>
+          <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <span className="text-xl">✅</span>
+              <div>
+                <p className="text-sm text-green-800 mb-2">
+                  <strong>Native Kannada audio detected!</strong> Click the "🔊 Listen" button to hear authentic pronunciation.
+                </p>
+                <details className="text-xs text-green-700">
+                  <summary className="cursor-pointer hover:text-green-900 font-medium">
+                    📱 Audio not working? (Android users)
+                  </summary>
+                  <div className="mt-2 space-y-1 pl-4 border-l-2 border-green-300">
+                    <p><strong>1. Download Kannada voice data:</strong></p>
+                    <p className="pl-3">• Open <strong>Settings</strong> → <strong>System</strong> → <strong>Languages & input</strong></p>
+                    <p className="pl-3">• Tap <strong>Text-to-speech output</strong></p>
+                    <p className="pl-3">• Select your TTS engine (usually "Google Text-to-speech")</p>
+                    <p className="pl-3">• Tap <strong>Install voice data</strong> → Download <strong>Kannada</strong></p>
+                    <p className="mt-2"><strong>2. Check internet connection:</strong> Some devices need internet for TTS.</p>
+                    <p className="mt-2"><strong>3. If it still doesn't work:</strong> Use the pronunciation guide displayed on each card!</p>
+                  </div>
+                </details>
+              </div>
+            </div>
           </div>
         )}
       </div>
