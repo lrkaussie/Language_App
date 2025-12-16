@@ -43,13 +43,13 @@ function App() {
 function Sidebar({ className = '' }) {
   return (
     <div className={`w-16 bg-white border-r border-gray-200 flex-col items-center py-4 gap-4 ${className}`}>
-      <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white text-lg cursor-pointer hover:bg-blue-600 transition-colors">
+      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-2xl cursor-pointer hover:bg-blue-50 hover:shadow-sm transition-all">
         🏠
       </div>
-      <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white text-lg cursor-pointer hover:bg-blue-600 transition-colors">
+      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-2xl cursor-pointer hover:bg-blue-50 hover:shadow-sm transition-all">
         📚
       </div>
-      <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white text-lg cursor-pointer hover:bg-blue-600 transition-colors">
+      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-2xl cursor-pointer hover:bg-blue-50 hover:shadow-sm transition-all">
         📊
       </div>
     </div>
@@ -62,7 +62,7 @@ function TopNav({ currentView, setCurrentView, mobileMenuOpen, setMobileMenuOpen
       <div className="flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-lg">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-100 to-teal-100 rounded-lg flex items-center justify-center text-xl sm:text-2xl shadow-sm">
             🐢
           </div>
           <span className="text-lg sm:text-xl font-bold text-gray-900">TalkTurtle</span>

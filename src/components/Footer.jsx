@@ -5,7 +5,7 @@ function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Left side - App info */}
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-base sm:text-lg">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-green-100 to-teal-100 rounded-lg flex items-center justify-center text-base sm:text-xl shadow-sm">
               🐢
             </div>
             <div className="text-center sm:text-left">
