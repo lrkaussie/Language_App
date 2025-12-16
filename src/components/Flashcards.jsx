@@ -9,6 +9,8 @@ function Flashcards() {
     return saved ? JSON.parse(saved) : []
   })
   const [category, setCategory] = useState('all')
+  const [isSpeaking, setIsSpeaking] = useState(false)
+  const [hasKannadaVoice, setHasKannadaVoice] = useState(null) // null = checking, true/false = result
 
   const filteredVocab = category === 'all' 
     ? vocabulary 
@@ -19,6 +21,28 @@ function Flashcards() {
   useEffect(() => {
     setIsFlipped(false)
   }, [currentIndex, category])
+
+  // Check for Kannada voice availability on mount
+  useEffect(() => {
+    const checkKannadaVoice = () => {
+      if ('speechSynthesis' in window) {
+        const voices = window.speechSynthesis.getVoices()
+        const kannadaAvailable = voices.some(voice => voice.lang.startsWith('kn'))
+        setHasKannadaVoice(kannadaAvailable)
+        console.log('🔍 Kannada voice available:', kannadaAvailable)
+      } else {
+        setHasKannadaVoice(false)
+      }
+    }
+
+    // Voices might not be loaded immediately
+    checkKannadaVoice()
+    
+    // Some browsers need this event
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = checkKannadaVoice
+    }
+  }, [])
 
   const handleNext = () => {
     setCurrentIndex((prev) => (prev + 1) % filteredVocab.length)
@@ -37,6 +61,70 @@ function Flashcards() {
   }
 
   const categories = ['all', ...new Set(vocabulary.map(w => w.category))]
+
+  // Web Speech API function with fallback
+  const speakWord = (e) => {
+    e.stopPropagation() // Prevent card flip when clicking audio button
+    
+    if ('speechSynthesis' in window) {
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel()
+      setIsSpeaking(false)
+      
+      // Get available voices
+      const voices = window.speechSynthesis.getVoices()
+      console.log('Available voices:', voices.map(v => `${v.name} (${v.lang})`))
+      
+      // Try to find a Kannada voice
+      const kannadaVoice = voices.find(voice => voice.lang.startsWith('kn'))
+      
+      let textToSpeak = currentWord.kannada
+      let language = 'kn-IN'
+      
+      // Fallback: If no Kannada voice, use transliteration with English voice
+      if (!kannadaVoice) {
+        console.log('No Kannada voice found. Using transliteration as fallback.')
+        textToSpeak = currentWord.transliteration
+        language = 'en-US'
+      } else {
+        console.log('Using Kannada voice:', kannadaVoice.name)
+      }
+      
+      const utterance = new SpeechSynthesisUtterance(textToSpeak)
+      utterance.lang = language
+      utterance.rate = 0.5 // Much slower - clearer for hearing
+      utterance.pitch = 1.0
+      utterance.volume = 1.0 // Maximum volume
+      
+      if (kannadaVoice) {
+        utterance.voice = kannadaVoice
+      }
+      
+      // Add event listeners with visual feedback
+      utterance.onstart = () => {
+        console.log('Speech started:', textToSpeak)
+        setIsSpeaking(true)
+      }
+      utterance.onend = () => {
+        console.log('Speech ended')
+        setIsSpeaking(false)
+      }
+      utterance.onerror = (e) => {
+        console.error('Speech error:', e)
+        setIsSpeaking(false)
+        alert(`Speech error: ${e.error}. Please check your system audio.`)
+      }
+      
+      window.speechSynthesis.speak(utterance)
+      
+      // Show what's being spoken
+      if (!kannadaVoice) {
+        console.log(`🔊 Playing in ENGLISH: "${textToSpeak}" (no Kannada voice available)`)
+      }
+    } else {
+      alert('Sorry, your browser does not support text-to-speech.')
+    }
+  }
 
   if (!currentWord) {
     return (
@@ -57,6 +145,41 @@ function Flashcards() {
         <p className="text-sm sm:text-base text-gray-600">
           Master Kannada through interactive flashcards. Tap to flip and learn!
         </p>
+        
+        {/* Audio Mode Notice */}
+        {hasKannadaVoice === false && (
+          <div className="mt-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">📢</span>
+              <div>
+                <h3 className="font-semibold text-blue-900 mb-1">Audio Mode: Transliteration</h3>
+                <p className="text-sm text-blue-800 mb-2">
+                  Kannada text-to-speech is not available on your system. Audio will play English pronunciation of the transliteration.
+                </p>
+                <details className="text-xs text-blue-700">
+                  <summary className="cursor-pointer hover:text-blue-900 font-medium">
+                    💡 How to enable native Kannada audio
+                  </summary>
+                  <div className="mt-2 space-y-1 pl-4 border-l-2 border-blue-300">
+                    <p><strong>Windows:</strong> Settings → Time & Language → Language → Add Kannada → Install Text-to-Speech</p>
+                    <p><strong>Mac:</strong> System Preferences → Accessibility → Spoken Content → System Voice → Manage Voices → Download Kannada</p>
+                    <p><strong>Android/iOS:</strong> Usually has Kannada voices pre-installed</p>
+                    <p className="mt-2 text-blue-600">⚠️ Note: Some Windows versions don't support Kannada TTS. In that case, use pronunciation hints above each word!</p>
+                  </div>
+                </details>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {hasKannadaVoice === true && (
+          <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2">
+            <span className="text-xl">✅</span>
+            <p className="text-sm text-green-800">
+              <strong>Native Kannada audio enabled!</strong> You'll hear authentic pronunciation.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Category Filter - Responsive with horizontal scroll on mobile */}
@@ -91,14 +214,51 @@ function Flashcards() {
                 <div className="text-4xl sm:text-5xl lg:text-7xl font-bold text-blue-600 mb-4 sm:mb-6">
                   {currentWord.kannada}
                 </div>
-                <div className="text-lg sm:text-xl lg:text-2xl text-gray-600 italic mb-2">
+                <div className="text-lg sm:text-xl lg:text-2xl text-gray-600 italic mb-4">
                   {currentWord.transliteration}
                 </div>
+                
+                {/* Pronunciation Hint - More Prominent */}
                 {currentWord.pronunciation && (
-                  <div className="text-sm sm:text-base lg:text-lg text-green-600 font-mono mb-2">
-                    🔊 {currentWord.pronunciation}
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 mb-4 border border-blue-100">
+                    <div className="text-xs sm:text-sm text-gray-600 mb-1 uppercase tracking-wide">
+                      Pronunciation Guide
+                    </div>
+                    <div className="text-xl sm:text-2xl lg:text-3xl text-blue-800 font-bold tracking-wider">
+                      {currentWord.pronunciation}
+                    </div>
                   </div>
                 )}
+                
+                {/* Audio Button with Mode Indicator */}
+                <div className="flex items-center justify-center gap-3">
+                  <button
+                    onClick={speakWord}
+                    disabled={isSpeaking}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all active:scale-95 flex items-center gap-2 shadow-md ${
+                      isSpeaking 
+                        ? 'bg-green-600 text-white animate-pulse' 
+                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                    }`}
+                    title={hasKannadaVoice === false ? 'Playing transliteration (Kannada voice not available)' : 'Listen to pronunciation'}
+                  >
+                    {isSpeaking ? '🔊 Playing...' : '🔊 Listen'}
+                  </button>
+                  
+                  {/* Audio Mode Badge */}
+                  {hasKannadaVoice === false && (
+                    <div className="flex items-center gap-1 text-xs bg-yellow-50 text-yellow-700 px-3 py-1.5 rounded-full border border-yellow-200">
+                      <span>📝</span>
+                      <span className="font-medium">Transliteration Mode</span>
+                    </div>
+                  )}
+                  {hasKannadaVoice === true && (
+                    <div className="flex items-center gap-1 text-xs bg-green-50 text-green-700 px-3 py-1.5 rounded-full border border-green-200">
+                      <span>✓</span>
+                      <span className="font-medium">Native Audio</span>
+                    </div>
+                  )}
+                </div>
                 <p className="text-xs sm:text-sm text-gray-400 mt-4 sm:mt-6">Tap to reveal meaning</p>
               </>
             ) : (
