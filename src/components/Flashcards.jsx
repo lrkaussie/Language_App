@@ -11,11 +11,28 @@ function Flashcards() {
   const [category, setCategory] = useState('all')
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [hasKannadaVoice, setHasKannadaVoice] = useState(null) // null = checking, true/false = result
+  const [shuffledVocab, setShuffledVocab] = useState([])
 
-  const filteredVocab = category === 'all' 
-    ? vocabulary 
-    : vocabulary.filter(word => word.category === category)
+  // Fisher-Yates shuffle algorithm for true randomization
+  const shuffleArray = (array) => {
+    const shuffled = [...array]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    return shuffled
+  }
 
+  // Initialize shuffled vocabulary on mount and when category changes
+  useEffect(() => {
+    const filtered = category === 'all' 
+      ? vocabulary 
+      : vocabulary.filter(word => word.category === category)
+    setShuffledVocab(shuffleArray(filtered))
+    setCurrentIndex(0) // Reset to first card when shuffling
+  }, [category])
+
+  const filteredVocab = shuffledVocab
   const currentWord = filteredVocab[currentIndex]
 
   useEffect(() => {
@@ -244,10 +261,7 @@ function Flashcards() {
         {categories.map(cat => (
           <button
             key={cat}
-            onClick={() => {
-              setCategory(cat)
-              setCurrentIndex(0)
-            }}
+            onClick={() => setCategory(cat)}
             className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
               category === cat
                 ? 'bg-blue-600 text-white shadow-sm'

@@ -12,6 +12,7 @@ A simple proof of concept for learning Kannada language with flashcards, phrases
 ## Features
 
 1. **Flashcards** - Learn vocabulary with flip cards showing Kannada script, transliteration, and English
+   - **Smart Randomization**: Words are shuffled into a random order each time you open the app or switch categories, using the Fisher-Yates algorithm for true randomization. This ensures you see different words in different orders across sessions, improving learning and retention.
 2. **Phrases** - Common Kannada phrases with translations
 3. **Quiz** - Interactive multiple-choice quiz to test your knowledge
 4. **Progress Tracking** - Mark words as learned (saved in browser)
@@ -43,11 +44,11 @@ The built files will be in the `dist` folder.
 ```
 ├── src/
 │   ├── components/
-│   │   ├── Flashcards.jsx    # Flashcard learning component
+│   │   ├── Flashcards.jsx    # Flashcard learning component (with randomizer)
 │   │   ├── Phrases.jsx       # Phrases learning component
 │   │   └── Quiz.jsx          # Quiz component
 │   ├── data/
-│   │   └── kannadaData.js    # Vocabulary and phrases data
+│   │   └── kannadaData.js    # Vocabulary and phrases data (1000 words)
 │   ├── App.jsx               # Main app component
 │   ├── main.jsx              # Entry point
 │   └── index.css             # Global styles
@@ -55,6 +56,21 @@ The built files will be in the `dist` folder.
 ├── package.json
 └── vite.config.js
 ```
+
+## How the Randomizer Works
+
+The flashcard randomizer uses the **Fisher-Yates shuffle algorithm** to ensure true random distribution:
+
+- **On App Load**: All vocabulary words (or filtered category words) are immediately shuffled into a random order
+- **On Category Change**: Words are reshuffled when you switch between categories (all, greetings, numbers, etc.)
+- **Equal Probability**: Every word has an equal chance of appearing in any position
+- **Session-Based**: Each time you open the app, you'll see a different random sequence, preventing memorization based on word order
+
+This approach enhances learning by:
+- Preventing predictable patterns
+- Forcing active recall rather than positional memory
+- Creating varied learning experiences across sessions
+- Ensuring all words get equal exposure over time
 
 ## Next Steps for Full Implementation
 
